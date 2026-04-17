@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IARE Worksheet Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Work+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #8b5cf6;
+            --accent-color: #f59e0b;
+            --dark-bg: #18181b;
+            --card-bg: rgba(39, 39, 42, 0.7);
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --border-color: rgba(63, 63, 70, 0.4);
+            --success-color: #10b981;
+            --gradient-bg: linear-gradient(135deg, #18181b 0%, #27272a 100%);
+            --glass-bg: rgba(39, 39, 42, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme="light"] {
+            --primary-color: #3b82f6;
+            --secondary-color: #8b5cf6;
+            --accent-color: #f59e0b;
+            --dark-bg: #f5f5f5;
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --text-primary: #18181b;
+            --text-secondary: #71717a;
+            --border-color: rgba(228, 228, 231, 0.6);
+            --success-color: #10b981;
+            --gradient-bg: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%);
+            --glass-bg: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: var(--gradient-bg);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            transition: background 0.4s ease, color 0.4s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Animated background elements */
+        .bg-decoration {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+            animation: float 20s infinite ease-in-out;
+            filter: blur(40px);
+        }
+
+        .bg-circle:nth-child(1) {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+
+        .bg-circle:nth-child(2) {
+            width: 300px;
+            height: 300px;
+            bottom: -50px;
+            left: -50px;
+            animation-delay: 7s;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+            filter: blur(40px);
+        }
+
+        .bg-circle:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            top: 50%;
+            left: 50%;
+            animation-delay: 14s;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.06) 0%, transparent 70%);
+            filter: blur(40px);
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            background: var(--card-bg);
+        }
+
+        .theme-toggle-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover .theme-toggle-icon {
+            transform: rotate(20deg);
+        }
+
+        .theme-toggle-text {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(30px, -30px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .header h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 4rem;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 30px rgba(37, 99, 235, 0.3);
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        .main-card {
+            background: var(--glass-bg);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--glass-border);
+            animation: fadeInUp 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+
+        .main-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+        }
+
+        .form-label {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            border-radius: 12px;
+            padding: 0.85rem 1.2rem;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .form-control:focus {
+            background: var(--glass-bg);
+            border-color: var(--primary-color);
+            color: var(--text-primary);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            padding: 0.9rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 0.9rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent-color);
+            color: #fff;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .pdf-viewer-container {
+            background: var(--glass-bg);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-top: 2rem;
+            border: 1px solid var(--glass-border);
+            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+            position: relative;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+
+        .pdf-viewer-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
+        }
+
+        .pdf-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .pdf-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+            color: var(--text-primary);
+            text-align: center;
+        }
+
+        .pdf-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .pdf-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .pdf-frame {
+            width: 100%;
+            height: 1000px;
+            border: none;
+            background: #525659;
+            display: block;
+        }
+
+        [data-theme="light"] .pdf-frame {
+            background: #f5f5f5;
+        }
+
+        .pdf-error {
+            width: 100%;
+            height: 1000px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--glass-bg);
+            border-radius: 16px;
+            border: 2px dashed var(--border-color);
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .error-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .pdf-error h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .pdf-error p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 500px;
+            line-height: 1.6;
+        }
+
+        .pdf-controls {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            background: var(--glass-bg);
+            padding: 1rem;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .pdf-controls button {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: #fff;
+            padding: 0.7rem 1.5rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+        }
+
+        .pdf-controls button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .alert-custom {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .quick-access {
+            background: var(--glass-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .quick-access h5 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .recent-item {
+            background: var(--glass-bg);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .recent-item:hover {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-color: transparent;
+            transform: translateX(5px);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .main-card {
+                padding: 1.5rem;
+            }
+            
+            .pdf-frame {
+                height: 600px;
+            }
+
+            .pdf-error {
+                height: 600px;
+            }
+
+            .pdf-wrapper {
+                max-width: 100%;
+            }
+
+            .theme-toggle {
+                top: 1rem;
+                right: 1rem;
+                padding: 0.5rem 1rem;
+            }
+
+            .theme-toggle-text {
+                display: none;
+            }
+
+            .pdf-controls {
+                justify-content: center;
+            }
+
+            .pdf-controls button {
+                font-size: 0.8rem;
+                padding: 0.6rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-decoration">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+
+    <!-- Theme Toggle Button -->
+    <div class="theme-toggle" id="themeToggle">
+        <span class="theme-toggle-icon" id="themeIcon">🌙</span>
+        <span class="theme-toggle-text" id="themeText">Dark Mode</span>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>WORKSHEET PORTAL</h1>
+            <p>Access lab submissions instantly</p>
+        </div>
+
+        <div class="main-card">
+            <div class="alert-custom">
+                <strong>📚 How to use:</strong> Enter your details below to access any worksheet. You can also view your classmates' submissions by changing the roll number.
+            </div>
+
+            <form id="worksheetForm">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Roll Number</label>
+                        <input type="text" class="form-control" id="rollNo" placeholder="e.g., 24951A1235" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Semester</label>
+                        <select class="form-control" id="semester" required>
+                            <option value="">Select Semester</option>
+                            <option value="1">Semester 1</option>
+                            <option value="2">Semester 2</option>
+                            <option value="3">Semester 3</option>
+                            <option value="4">Semester 4</option>
+                            <option value="5">Semester 5</option>
+                            <option value="6">Semester 6</option>
+                            <option value="7">Semester 7</option>
+                            <option value="8">Semester 8</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Course Code</label>
+                        <input type="text" class="form-control" id="courseCode" placeholder="e.g., ACSD16" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Week Number</label>
+                        <input type="number" class="form-control" id="weekNo" placeholder="e.g., 10" min="1" max="15" required>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex gap-3 flex-wrap">
+                    <button type="submit" class="btn btn-primary">
+                        <span id="btnText">🚀 Load Worksheet</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="downloadBtn" style="display: none;">
+                        📥 Download PDF
+                    </button>
+                </div>
+            </form>
+
+            <div class="quick-access" id="recentAccess" style="display: none;">
+                <h5>🕒 Recent Access</h5>
+                <div id="recentList"></div>
+            </div>
+        </div>
+
+
+
+        <div id="pdfViewerContainer" style="display: none;">
+            <div class="pdf-viewer-container">
+                <div class="pdf-header">
+                    <div class="pdf-title" id="pdfTitle">📄 Worksheet</div>
+                </div>
+                
+                <div class="pdf-controls">
+                    <button id="downloadPdf">📥 Download</button>
+                </div>
+                
+                <div class="pdf-wrapper" id="pdfWrapper">
+                    <iframe id="pdfFrame" class="pdf-frame"></iframe>
+                    <div class="pdf-error" id="pdfError" style="display: none;">
+                        <div class="error-icon">📄</div>
+                        <h3>Worksheet Not Uploaded</h3>
+                        <p>This worksheet hasn't been uploaded yet. Please check back later or contact your instructor.</p>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const form = document.getElementById('worksheetForm');
+        const pdfViewerContainer = document.getElementById('pdfViewerContainer');
+        const pdfFrame = document.getElementById('pdfFrame');
+        const pdfTitle = document.getElementById('pdfTitle');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const btnText = document.getElementById('btnText');
+        const recentAccess = document.getElementById('recentAccess');
+        const recentList = document.getElementById('recentList');
+        
+        // PDF Controls
+        const downloadPdfBtn = document.getElementById('downloadPdf');
+        const pdfWrapper = document.getElementById('pdfWrapper');
+        const pdfError = document.getElementById('pdfError');
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const themeText = document.getElementById('themeText');
+        const html = document.documentElement;
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        html.setAttribute('data-theme', savedTheme);
+        updateThemeUI(savedTheme);
+
+        // Theme toggle functionality
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeUI(newTheme);
+        });
+
+        function updateThemeUI(theme) {
+            if (theme === 'dark') {
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark Mode';
+            } else {
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light Mode';
+            }
+        }
+
+        let currentUrl = '';
+        let recentWorksheets = JSON.parse(localStorage.getItem('recentWorksheets') || '[]');
+
+        // Load recent worksheets on page load
+        updateRecentList();
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const rollNo = document.getElementById('rollNo').value.trim();
+            const semester = document.getElementById('semester').value;
+            const courseCode = document.getElementById('courseCode').value.trim().toUpperCase();
+            const weekNo = document.getElementById('weekNo').value;
+
+            if (!rollNo || !semester || !courseCode || !weekNo) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Generate URL based on the pattern
+            const url = `https://iare-data.s3.ap-south-1.amazonaws.com/uploads/STUDENTS/${rollNo}/LAB/SEM${semester}/${courseCode}/${rollNo}_week${weekNo}.pdf`;
+            
+            currentUrl = url;
+
+            // Update button
+            btnText.innerHTML = '<span class="loading-spinner"></span> Loading...';
+
+            // Reset error state
+            pdfError.style.display = 'none';
+            pdfFrame.style.display = 'block';
+
+            // Load PDF immediately
+            pdfFrame.src = url + '#toolbar=1&navpanes=0&scrollbar=1&view=FitH';
+            
+            let errorShown = false;
+
+            // Monitor iframe load
+            pdfFrame.onload = () => {
+                setTimeout(() => {
+                    try {
+                        const iframeDoc = pdfFrame.contentDocument || pdfFrame.contentWindow.document;
+                        const bodyText = iframeDoc.body?.innerText || iframeDoc.body?.textContent || '';
+                        const bodyHTML = iframeDoc.body?.innerHTML || '';
+                        
+                        // Check for S3 Access Denied or NoSuchKey errors
+                        if (bodyText.includes('AccessDenied') || 
+                            bodyText.includes('Access Denied') ||
+                            bodyText.includes('NoSuchKey') ||
+                            bodyHTML.includes('<Code>AccessDenied</Code>') ||
+                            bodyHTML.includes('<Code>NoSuchKey</Code>') ||
+                            (bodyText.length < 200 && bodyText.includes('Access'))) {
+                            pdfFrame.style.display = 'none';
+                            pdfError.style.display = 'flex';
+                            errorShown = true;
+                        }
+                    } catch (e) {
+                        // Cross-origin - PDF loaded successfully
+                    }
+                    btnText.innerHTML = '🚀 Load Worksheet';
+                }, 800);
+            };
+
+            pdfFrame.onerror = () => {
+                if (!errorShown) {
+                    pdfFrame.style.display = 'none';
+                    pdfError.style.display = 'flex';
+                    errorShown = true;
+                }
+                btnText.innerHTML = '🚀 Load Worksheet';
+            };
+            
+            // Show PDF viewer immediately
+            // Show PDF viewer immediately
+            setTimeout(() => {
+                pdfViewerContainer.style.display = 'block';
+                pdfTitle.textContent = `📄 ${courseCode} - Week ${weekNo} (${rollNo})`;
+                downloadBtn.style.display = 'inline-block';
+                
+                // Smooth scroll to PDF
+                pdfViewerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                // Save to recent
+                saveToRecent({ rollNo, semester, courseCode, weekNo, url });
+            }, 100);
+        });
+
+        // PDF Control Functions
+        downloadPdfBtn.addEventListener('click', () => {
+            window.open(currentUrl, '_blank');
+        });
+
+        // Download PDF functionality
+        downloadBtn.addEventListener('click', function() {
+            window.open(currentUrl, '_blank');
+        });
+
+        // Save to recent worksheets
+        function saveToRecent(data) {
+            // Remove if already exists
+            recentWorksheets = recentWorksheets.filter(item => 
+                !(item.rollNo === data.rollNo && item.semester === data.semester && 
+                  item.courseCode === data.courseCode && item.weekNo === data.weekNo)
+            );
+            
+            // Add to beginning
+            recentWorksheets.unshift(data);
+            
+            // Keep only last 5
+            recentWorksheets = recentWorksheets.slice(0, 5);
+            
+            // Save to localStorage
+            localStorage.setItem('recentWorksheets', JSON.stringify(recentWorksheets));
+            
+            updateRecentList();
+        }
+
+        // Update recent list display
+        function updateRecentList() {
+            if (recentWorksheets.length === 0) {
+                recentAccess.style.display = 'none';
+                return;
+            }
+
+            recentAccess.style.display = 'block';
+            recentList.innerHTML = recentWorksheets.map(item => `
+                <div class="recent-item" onclick='loadRecent(${JSON.stringify(item)})'>
+                    <strong>${item.rollNo}</strong> - ${item.courseCode} Week ${item.weekNo} (Sem ${item.semester})
+                </div>
+            `).join('');
+        }
+
+        // Load from recent
+        function loadRecent(data) {
+            document.getElementById('rollNo').value = data.rollNo;
+            document.getElementById('semester').value = data.semester;
+            document.getElementById('courseCode').value = data.courseCode;
+            document.getElementById('weekNo').value = data.weekNo;
+            
+            // Trigger form submission
+            form.dispatchEvent(new Event('submit'));
+        }
+
+        // Handle iframe load errors
+        pdfFrame.addEventListener('error', function() {
+            alert('Failed to load worksheet. Please check if the file exists.');
+            btnText.innerHTML = '🚀 Load Worksheet';
+        });
+    </script>
+    <footer style="text-align:center; padding: 2rem; color: var(--text-secondary); font-size: 0.85rem;">
+        © 2026 IARE Worksheet Portal.<br>
+        This tool is exclusively made for IARE students.
+    </footer>
+</body>
+</html>
