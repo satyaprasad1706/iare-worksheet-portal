@@ -606,7 +606,45 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Course Code</label>
-                        <input type="text" class="form-control" id="courseCode" placeholder="e.g., ACSD16" required>
+                        <input type="text" class="form-control" id="courseCode" list="subjectList" placeholder="Search subject or enter code e.g., ACSD16" required autocomplete="off">
+                        <datalist id="subjectList">
+                            <option value="ACSD04">Professional Communication Lab</option>
+                            <option value="ACSD02">OOP with Java Lab</option>
+                            <option value="ACSD06">Problem Solving Lab</option>
+                            <option value="ACSD11">Data Structures Lab</option>
+                            <option value="ACSD10">Operating Systems Lab</option>
+                            <option value="ACSD16">DAA Lab</option>
+                            <option value="ACSD17">Web Engineering Lab</option>
+                            <option value="AITD05">DBMS Lab</option>
+                            <option value="ACSD26">AI Lab</option>
+                            <option value="ACSD27">Cloud Lab</option>
+                            <option value="ACSD41">Linux / Data Science Lab</option>
+                            <option value="ACSD42">Machine Learning Lab</option>
+                            <option value="ACSD54">Computing Things Lab</option>
+                            <option value="ACSD55">Security Lab</option>
+                            <option value="AECD05">Electronic Devices Lab</option>
+                            <option value="AECD06">Digital Systems Lab</option>
+                            <option value="AECD08">Signals Lab</option>
+                            <option value="AECD09">Communication Systems Lab</option>
+                            <option value="AECD10">Microprocessors Lab</option>
+                            <option value="AECD11">VLSI Lab</option>
+                            <option value="AEED08">Electrical Networks Lab</option>
+                            <option value="AEED09">DC Machines Lab</option>
+                            <option value="AEED24">Measurements Lab</option>
+                            <option value="AEED28">Microcontrollers Lab</option>
+                            <option value="AEED39">Power Electronics Lab</option>
+                            <option value="AEED40">PLC Lab</option>
+                            <option value="AEED55">Power Systems Lab</option>
+                            <option value="AMED02">Manufacturing Practice Lab</option>
+                            <option value="AMED03">Engineering Graphics Lab</option>
+                            <option value="AMED09">Manufacturing Lab</option>
+                            <option value="AMED10">Fluid Mechanics Lab</option>
+                            <option value="AMED14">Thermal Lab</option>
+                            <option value="ACED01">Surveying Lab</option>
+                            <option value="ACED02">Geotechnical Lab</option>
+                            <option value="ACED03">Concrete Lab</option>
+                            <option value="ACED04">Transportation Lab</option>
+                        </datalist>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Week Number</label>
