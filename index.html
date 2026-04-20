@@ -604,47 +604,10 @@
                             <option value="8">Semester 8</option>
                         </select>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6" style="position:relative">
                         <label class="form-label">Course Code</label>
-                        <input type="text" class="form-control" id="courseCode" list="subjectList" placeholder="Search subject or enter code e.g., ACSD16" required autocomplete="off">
-                        <datalist id="subjectList">
-                            <option value="ACSD04">Professional Communication Lab</option>
-                            <option value="ACSD02">OOP with Java Lab</option>
-                            <option value="ACSD06">Problem Solving Lab</option>
-                            <option value="ACSD11">Data Structures Lab</option>
-                            <option value="ACSD10">Operating Systems Lab</option>
-                            <option value="ACSD16">DAA Lab</option>
-                            <option value="ACSD17">Web Engineering Lab</option>
-                            <option value="AITD05">DBMS Lab</option>
-                            <option value="ACSD26">AI Lab</option>
-                            <option value="ACSD27">Cloud Lab</option>
-                            <option value="ACSD41">Linux / Data Science Lab</option>
-                            <option value="ACSD42">Machine Learning Lab</option>
-                            <option value="ACSD54">Computing Things Lab</option>
-                            <option value="ACSD55">Security Lab</option>
-                            <option value="AECD05">Electronic Devices Lab</option>
-                            <option value="AECD06">Digital Systems Lab</option>
-                            <option value="AECD08">Signals Lab</option>
-                            <option value="AECD09">Communication Systems Lab</option>
-                            <option value="AECD10">Microprocessors Lab</option>
-                            <option value="AECD11">VLSI Lab</option>
-                            <option value="AEED08">Electrical Networks Lab</option>
-                            <option value="AEED09">DC Machines Lab</option>
-                            <option value="AEED24">Measurements Lab</option>
-                            <option value="AEED28">Microcontrollers Lab</option>
-                            <option value="AEED39">Power Electronics Lab</option>
-                            <option value="AEED40">PLC Lab</option>
-                            <option value="AEED55">Power Systems Lab</option>
-                            <option value="AMED02">Manufacturing Practice Lab</option>
-                            <option value="AMED03">Engineering Graphics Lab</option>
-                            <option value="AMED09">Manufacturing Lab</option>
-                            <option value="AMED10">Fluid Mechanics Lab</option>
-                            <option value="AMED14">Thermal Lab</option>
-                            <option value="ACED01">Surveying Lab</option>
-                            <option value="ACED02">Geotechnical Lab</option>
-                            <option value="ACED03">Concrete Lab</option>
-                            <option value="ACED04">Transportation Lab</option>
-                        </datalist>
+                        <input type="text" class="form-control" id="courseCode" placeholder="Type code or subject name..." required autocomplete="off" oninput="filterSubjects()" onfocus="showDropdown()" onblur="hideDropdown()">
+                        <div id="subjectDropdown" style="display:none; position:absolute; z-index:999; width:100%; max-height:220px; overflow-y:auto; background:var(--card-bg); border:1px solid var(--glass-border); border-radius:12px; margin-top:4px; backdrop-filter:blur(20px);"></div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Week Number</label>
@@ -698,6 +661,77 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        const subjects = [
+            { code: 'ACSD04', name: 'Professional Communication Lab' },
+            { code: 'ACSD02', name: 'OOP with Java Lab' },
+            { code: 'ACSD06', name: 'Problem Solving Lab' },
+            { code: 'ACSD11', name: 'Data Structures Lab' },
+            { code: 'ACSD10', name: 'Operating Systems Lab' },
+            { code: 'ACSD16', name: 'DAA Lab' },
+            { code: 'ACSD17', name: 'Web Engineering Lab' },
+            { code: 'AITD05', name: 'DBMS Lab' },
+            { code: 'ACSD26', name: 'AI Lab' },
+            { code: 'ACSD27', name: 'Cloud Lab' },
+            { code: 'ACSD41', name: 'Linux / Data Science Lab' },
+            { code: 'ACSD42', name: 'Machine Learning Lab' },
+            { code: 'ACSD54', name: 'Computing Things Lab' },
+            { code: 'ACSD55', name: 'Security Lab' },
+            { code: 'AECD05', name: 'Electronic Devices Lab' },
+            { code: 'AECD06', name: 'Digital Systems Lab' },
+            { code: 'AECD08', name: 'Signals Lab' },
+            { code: 'AECD09', name: 'Communication Systems Lab' },
+            { code: 'AECD10', name: 'Microprocessors Lab' },
+            { code: 'AECD11', name: 'VLSI Lab' },
+            { code: 'AEED08', name: 'Electrical Networks Lab' },
+            { code: 'AEED09', name: 'DC Machines Lab' },
+            { code: 'AEED24', name: 'Measurements Lab' },
+            { code: 'AEED28', name: 'Microcontrollers Lab' },
+            { code: 'AEED39', name: 'Power Electronics Lab' },
+            { code: 'AEED40', name: 'PLC Lab' },
+            { code: 'AEED55', name: 'Power Systems Lab' },
+            { code: 'AMED02', name: 'Manufacturing Practice Lab' },
+            { code: 'AMED03', name: 'Engineering Graphics Lab' },
+            { code: 'AMED09', name: 'Manufacturing Lab' },
+            { code: 'AMED10', name: 'Fluid Mechanics Lab' },
+            { code: 'AMED14', name: 'Thermal Lab' },
+            { code: 'ACED01', name: 'Surveying Lab' },
+            { code: 'ACED02', name: 'Geotechnical Lab' },
+            { code: 'ACED03', name: 'Concrete Lab' },
+            { code: 'ACED04', name: 'Transportation Lab' },
+        ];
+
+        const courseCodeInput = document.getElementById('courseCode');
+        const subjectDropdown = document.getElementById('subjectDropdown');
+
+        function renderDropdown(list) {
+            subjectDropdown.innerHTML = list.map(s => `
+                <div onmousedown="selectSubject('${s.code}')" style="padding:0.7rem 1rem; cursor:pointer; color:var(--text-primary); font-size:0.95rem;" onmouseover="this.style.background='var(--primary-color)'" onmouseout="this.style.background='transparent'">
+                    <strong>${s.code}</strong> — ${s.name}
+                </div>
+            `).join('');
+        }
+
+        function showDropdown() {
+            renderDropdown(subjects);
+            subjectDropdown.style.display = 'block';
+        }
+
+        function hideDropdown() {
+            setTimeout(() => subjectDropdown.style.display = 'none', 150);
+        }
+
+        function filterSubjects() {
+            const q = courseCodeInput.value.toLowerCase();
+            const filtered = subjects.filter(s => s.code.toLowerCase().includes(q) || s.name.toLowerCase().includes(q));
+            renderDropdown(filtered);
+            subjectDropdown.style.display = filtered.length ? 'block' : 'none';
+        }
+
+        function selectSubject(code) {
+            courseCodeInput.value = code;
+            subjectDropdown.style.display = 'none';
+        }
+
         const form = document.getElementById('worksheetForm');
         const pdfViewerContainer = document.getElementById('pdfViewerContainer');
         const pdfFrame = document.getElementById('pdfFrame');
